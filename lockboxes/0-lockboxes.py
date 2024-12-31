@@ -15,7 +15,7 @@ def canUnlockAll(boxes):
     Return (bool):
         True if all boxes can be opened, else return False
     """
-    #former method, added a more accurate one further down, with commentary
+    # former method, added a more accurate one further down, with commentary
     """keychain = [0]
     for key in keychain:
         for looseKey in boxes[key]:
@@ -27,21 +27,21 @@ def canUnlockAll(boxes):
 
     numberOfBoxes = len(boxes)
 
-    #list to track if the boxes are opened or not
+    # list to track if the boxes are opened or not
     openedBoxes = [False] * numberOfBoxes
     openedBoxes[0] = True
 
-    #take the keys of the first box in a list
+    # take the keys of the first box in a list
     keyring = list(set(boxes[0]))
     key_index = 0
 
-    #iterate over the keys and open the boxes corresponding
-    #adding the keys found into the keyring list
+    # iterate over the keys and open the boxes corresponding
+    # adding the keys found into the keyring list
     while key_index < len(keyring):
         key = keyring[key_index]
         key_index += 1
         if 0 <= key < numberOfBoxes and not openedBoxes[key]:
             openedBoxes[key] = True
             keyring += boxes[key]
-    
+
     return all(openedBoxes)
