@@ -33,11 +33,13 @@ def canUnlockAll(boxes):
 
     #take the keys of the first box in a list
     keyring = list(set(boxes[0]))
+    key_index = 0
 
     #iterate over the keys and open the boxes corresponding
     #adding the keys found into the keyring list
-    while keyring:
-        key = keyring.pop(0)
+    while key_index < len(keyring):
+        key = keyring[key_index]
+        key_index += 1
         if 0 <= key < numberOfBoxes and not openedBoxes[key]:
             openedBoxes[key] = True
             keyring += boxes[key]
