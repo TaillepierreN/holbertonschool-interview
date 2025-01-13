@@ -19,7 +19,11 @@ struct binary_trees_s
 };
 
 typedef struct binary_trees_s binary_tree_t;
-binary_tree_t *binary_tree_node(binary_tree_t *parent, int value);
+typedef struct binary_trees_s heap_t;
 
+binary_tree_t *binary_tree_node(binary_tree_t *parent, int value);
+heap_t *heap_insert(heap_t **root, int value);
+heap_t *insert_node(heap_t *root, int value);
+heap_t *max_heap_move(heap_t *node);
 
 #endif /* BINARY_TREES_H */
