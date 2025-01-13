@@ -2,7 +2,7 @@
 #include "binary_trees.h"
 
 /**
- * heapify_up - Restores the Max Heap property by moving the node upwards
+ * max_heap_move - Restores the Max Heap property by moving the node upwards
  * @node: Pointer to the inserted node
  * Return: Pointer to the node after heapify
  */
