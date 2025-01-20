@@ -1,10 +1,13 @@
 #!/usr/bin/python3
+"""
+    Calculates the fewest number of operations needed to result in exactly n char
+    using Copy All and Paste operations.
+"""
+
 
 def minOperations(n):
     """
-    Calculates the fewest number of operations needed to result in exactly n char
-    using Copy All and Paste operations.
-    
+
     Start with the smallest factor (2) and repeatedly divide by it and count it
     until it is no longer divisible.
     Add the factor to the operations for each division.
