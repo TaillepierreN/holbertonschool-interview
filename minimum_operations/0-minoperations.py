@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 """
-    Calculates the fewest number of operations needed to result in exactly n char
-    using Copy All and Paste operations.
+    Calculates the fewest number of operations needed
+    to result in exactly n char using Copy All and Paste
+    operations.
 """
 
 
