@@ -2,7 +2,7 @@
 #include "sandpiles.h"
 
 /**
- * print_grid - Prints a 3x3 grid
+ * print_grid_sandpile - Prints a 3x3 grid
  * @grid: The grid to print
  */
 void print_grid_sandpile(int grid[3][3])
