@@ -92,7 +92,7 @@ void sandpiles_sum(int grid1[3][3], int grid2[3][3])
 
     while (!is_stable(grid1))
     {
-        print_grid(grid1);
+        print_grid_sandpile(grid1);
         toppling_round(grid1);
     }
 }
