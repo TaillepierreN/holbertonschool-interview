@@ -5,7 +5,7 @@
  * print_grid - Prints a 3x3 grid
  * @grid: The grid to print
  */
-static void print_grid(int grid[3][3])
+void print_grid(int grid[3][3])
 {
     int i, j;
     printf("=\n");
@@ -26,7 +26,7 @@ static void print_grid(int grid[3][3])
  * @grid: The grid to check
  * Return: 1 if stable
  */
-static int is_stable(int grid[3][3])
+int is_stable(int grid[3][3])
 {
     int i, j;
     for (i = 0; i < 3; i++)
@@ -44,7 +44,7 @@ static int is_stable(int grid[3][3])
  * toppling_round - Topples an unstable sandpile
  * @grid: The 3x3 grid to topple
  */
-static void toppling_round(int grid[3][3])
+void toppling_round(int grid[3][3])
 {
     int temp[3][3] = {0};
     int i, j;
