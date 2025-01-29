@@ -5,7 +5,7 @@
  * print_grid - Prints a 3x3 grid
  * @grid: The grid to print
  */
-void print_grid(int grid[3][3])
+void print_grid_sandpile(int grid[3][3])
 {
     int i, j;
     printf("=\n");
