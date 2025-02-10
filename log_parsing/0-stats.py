@@ -1,7 +1,12 @@
 #!/usr/bin/python3
 """
-    Reads stdin line by line and computes metrics
-    for a log file.
+    Continuously reads input lines and processes them to compute metrics:
+    1. Reads and splits each line by spaces.
+    2. Skips lines that don't meet the required format or aren't "GET" requests.
+    3. Extracts the status code and file size, skipping lines with invalid file sizes.
+    4. Updates the total file size and counts occurrences of valid status codes.
+    5. Prints metrics after every 10 processed lines.
+    6. Handles end of input (EOF) or keyboard interruption (CTRL + C).
 """
 total_file_size = 0
 status_code_count = {}
@@ -18,16 +23,6 @@ def print_metrics():
         if status_code in status_code_count:
             print(f"{status_code}: {status_code_count[status_code]}")
 
-
-    """
-        Continuously reads input lines and processes them to compute metrics:
-        1. Reads and splits each line by spaces.
-        2. Skips lines that don't meet the required format or aren't "GET" requests.
-        3. Extracts the status code and file size, skipping lines with invalid file sizes.
-        4. Updates the total file size and counts occurrences of valid status codes.
-        5. Prints metrics after every 10 processed lines.
-        6. Handles end of input (EOF) or keyboard interruption (CTRL + C).
-    """
 try:
     while True:
         try:
