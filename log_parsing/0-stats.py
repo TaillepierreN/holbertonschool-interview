@@ -1,12 +1,12 @@
 #!/usr/bin/python3
 """
-    Continuously reads input lines and processes them to compute metrics:
-    1. Reads and splits each line by spaces.
-    2. Skips lines that don't meet the required format or aren't "GET" requests.
-    3. Extracts the status code and file size, skipping lines with invalid file sizes.
-    4. Updates the total file size and counts occurrences of valid status codes.
-    5. Prints metrics after every 10 processed lines.
-    6. Handles end of input (EOF) or keyboard interruption (CTRL + C).
+Continuously reads input lines and processes them to compute metrics:
+1. Reads and splits each line by spaces.
+2. Skips lines that don't meet the required format or aren't "GET" requests.
+3. Extracts the status code and file size, skipping lines with invalid file sizes.
+4. Updates the total file size and counts occurrences of valid status codes.
+5. Prints metrics after every 10 processed lines.
+6. Handles end of input (EOF) or keyboard interruption (CTRL + C).
 """
 total_file_size = 0
 status_code_count = {}
@@ -16,7 +16,7 @@ valid_status_codes = ['200', '301', '400', '401', '403', '404', '405', '500']
 
 def print_metrics():
     """
-        Prints the computed metrics to stdout.
+    Prints the computed metrics to stdout.
     """
     print(f"File size: {total_file_size}")
     for status_code in sorted(valid_status_codes):
