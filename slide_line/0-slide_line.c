@@ -11,20 +11,21 @@
  */
 int slide_line(int *line, size_t size, int direction)
 {
-    size_t i, j, last_merge;
+    size_t i, j;
+	int last_merge;
     
     if (direction != SLIDE_LEFT && direction != SLIDE_RIGHT)
         return (0);
     
     if (direction == SLIDE_LEFT)
     {
-        last_merge = 0;
+        last_merge = -1;
         for (i = 0, j = 0; i < size; i++)
         {
             if (line[i] != 0)
             {
 				// si j(endroit ou on va mettre le nombre)-1 est égale a position i
-                if (j > 0 && line[j - 1] == line[i] && last_merge != j - 1)
+                if (j > 0 && line[j - 1] == line[i] && last_merge != (int)j - 1)
                 {
                     line[j - 1] *= 2;
                     line[i] = 0;
@@ -49,7 +50,7 @@ int slide_line(int *line, size_t size, int direction)
         {
             if (line[i - 1] != 0)
             {
-                if (j < size && line[j] == line[i - 1] && last_merge != j)
+                if (j < size && line[j] == line[i - 1] && last_merge != (int)j)
                 {
                     line[j] *= 2;
                     line[i - 1] = 0;
@@ -57,12 +58,12 @@ int slide_line(int *line, size_t size, int direction)
                 }
                 else
                 {
-                    if (j != i)
+					j--;
+                    if (j != i - 1)
                     {
                         line[j - 1] = line[i - 1];
                         line[i - 1] = 0;
                     }
-                    j--;
                 }
             }
         }
