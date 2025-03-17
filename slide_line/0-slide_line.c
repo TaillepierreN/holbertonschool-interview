@@ -50,11 +50,11 @@ int slide_line(int *line, size_t size, int direction)
         {
             if (line[i - 1] != 0)
             {
-                if (j < size && line[j - 1] == line[i - 1] && last_merge != (int)(j - 1))
+                if (j < size && line[j] == line[i - 1] && last_merge != (int)(j))
                 {
-                    line[j - 1] *= 2;
+                    line[j] *= 2;
                     line[i - 1] = 0;
-                    last_merge = j - 1;
+                    last_merge = j;
                 }
                 else
                 {
