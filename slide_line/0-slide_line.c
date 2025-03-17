@@ -45,23 +45,23 @@ int slide_line(int *line, size_t size, int direction)
     }
     else if (direction == SLIDE_RIGHT)
     {
-        last_merge = size - 1;
+        last_merge = -1;
         for (i = size, j = size; i > 0; i--)
         {
             if (line[i - 1] != 0)
             {
-                if (j < size && line[j] == line[i - 1] && last_merge != (int)j)
+                if (j < size && line[j - 1] == line[i - 1] && last_merge != (int)(j - 1))
                 {
-                    line[j] *= 2;
+                    line[j - 1] *= 2;
                     line[i - 1] = 0;
-                    last_merge = j;
+                    last_merge = j - 1;
                 }
                 else
                 {
-					j--;
+                    j--;
                     if (j != i - 1)
                     {
-                        line[j - 1] = line[i - 1];
+                        line[j] = line[i - 1];
                         line[i - 1] = 0;
                     }
                 }
