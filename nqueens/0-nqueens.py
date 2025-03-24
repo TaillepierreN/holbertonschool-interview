@@ -1,6 +1,6 @@
 #!/usr/bin/python3
-
 import sys
+
 
 def is_safe(board, row, col):
     """
@@ -15,6 +15,7 @@ def is_safe(board, row, col):
             return False
     return True
 
+
 def backtrack(row, board, n):
     """
     A recursive method that checks all possible
@@ -24,7 +25,7 @@ def backtrack(row, board, n):
     if row == n:
         print([[i, board[i]] for i in range(n)])
         return
-    
+
     # iterate over the columns to find a safe spot
     # to place the queen, if not found, backtrack
     # to the previous row by returning from the method
@@ -32,6 +33,7 @@ def backtrack(row, board, n):
         if is_safe(board, row, col):
             board[row] = col
             backtrack(row + 1, board, n)
+
 
 def nqueens(n):
     """
@@ -46,6 +48,7 @@ def nqueens(n):
 
     # call the recursive method to solve the n queens problem
     backtrack(0, board, n)
+
 
 def main():
     """
@@ -66,6 +69,7 @@ def main():
         sys.exit(1)
 
     nqueens(n)
+
 
 if __name__ == "__main__":
     main()
