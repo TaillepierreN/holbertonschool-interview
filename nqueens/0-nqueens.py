@@ -31,7 +31,7 @@ def backtrack(row, board, n):
     for col in range(n):
         if is_safe(board, row, col):
             board[row] = col
-            backtrack(row + 1, board)
+            backtrack(row + 1, board, n)
 
 def nqueens(n):
     """
