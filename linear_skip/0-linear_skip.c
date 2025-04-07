@@ -5,7 +5,8 @@
  * @list: Pointer to the head of the skip list
  * @value: Value to search for
  *
- * Return: Pointer to the first node where value is located, or NULL if not found
+ * Return: Pointer to the first node where value is located,
+ * or NULL if not found
  */
 skiplist_t *linear_skip(skiplist_t *list, int value)
 {
