@@ -1,0 +1,56 @@
+#include "search.h"
+
+/**
+ * linear_skip - Searches for a value in a sorted skip list
+ * @list: Pointer to the head of the skip list
+ * @value: Value to search for
+ *
+ * Return: Pointer to the first node where value is located, or NULL if not found
+ */
+skiplist_t *linear_skip(skiplist_t *list, int value)
+{
+	skiplist_t *node, *jump;
+
+	if (list == NULL)
+		return (NULL);
+
+	node = list;
+	jump = list->express;
+
+	while (jump && jump->n < value)
+	{
+		printf("Value checked at index [%lu] = [%d]\n", jump->index, jump->n);
+		node = jump;
+		jump = jump->express;
+	}
+
+	if (jump)
+	{
+		printf("Value checked at index [%lu] = [%d]\n", jump->index, jump->n);
+		printf("Value found between indexes [%lu] and [%lu]\n",
+			   node->index, jump->index);
+	}
+	else
+	{
+		skiplist_t *tail = node;
+
+		while (tail->next)
+			tail = tail->next;
+
+		printf("Value found between indexes [%lu] and [%lu]\n",
+			   node->index, tail->index);
+	}
+
+	while (node && node != jump)
+	{
+		printf("Value checked at index [%lu] = [%d]\n", node->index, node->n);
+		if (node->n == value)
+			return (node);
+		node = node->next;
+	}
+
+	if (jump && jump->n == value)
+		return (jump);
+
+	return (NULL);
+}
