@@ -26,21 +26,9 @@ skiplist_t *linear_skip(skiplist_t *list, int value)
 	}
 
 	if (jump)
-	{
 		printf("Value checked at index [%lu] = [%d]\n", jump->index, jump->n);
-		printf("Value found between indexes [%lu] and [%lu]\n",
-			   node->index, jump->index);
-	}
-	else
-	{
-		skiplist_t *tail = node;
 
-		while (tail->next)
-			tail = tail->next;
-
-		printf("Value found between indexes [%lu] and [%lu]\n",
-			   node->index, tail->index);
-	}
+	print_found_range(node, jump);
 
 	while (node && node != jump)
 	{
@@ -54,4 +42,27 @@ skiplist_t *linear_skip(skiplist_t *list, int value)
 		return (jump);
 
 	return (NULL);
+}
+
+/**
+ * print_found_range - Prints the range of indices where the value was found
+ * @start: Pointer to the start node of the range
+ * @end: Pointer to the end node of the range
+ *
+ * Return: void
+ */
+void print_found_range(skiplist_t *start, skiplist_t *end)
+{
+	if (!start)
+		return;
+
+	if (!end)
+	{
+		end = start;
+		while (end->next)
+			end = end->next;
+	}
+
+	printf("Value found between indexes [%lu] and [%lu]\n",
+		   start->index, end->index);
 }
