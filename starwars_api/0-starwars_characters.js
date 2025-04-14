@@ -12,7 +12,7 @@ const url = 'https://swapi-api.hbtn.io/api/films/' + filmID;
 request(url, (error, response, body) => {
   if (error) {
     console.error('Error: ', error);
-    return;    
+    return;
   }
 
   const charData = JSON.parse(body).characters;
@@ -26,9 +26,9 @@ request(url, (error, response, body) => {
         console.error('Error: ', error);
         return;
       }
-      console.log(JSON.parse(body).name);         
+      console.log(JSON.parse(body).name);
       printCharacters(index + 1);
-      });    
+    });    
   };
   printCharacters(0);
-})
+});
