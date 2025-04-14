@@ -7,6 +7,7 @@ if (!filmID || isNaN(filmID)) {
   console.log('Invalid film ID, ./0-starwars_characters.js <film_id>');
   process.exit(1);
 }
+
 const url = "https://swapi-api.hbtn.io/api/films/" + filmID;
 
 request(url, (error, response, body) => {
