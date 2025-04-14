@@ -28,7 +28,7 @@ request(url, (error, response, body) => {
       }
       console.log(JSON.parse(body).name);
       printCharacters(index + 1);
-    });    
+    });
   };
   printCharacters(0);
 });
