@@ -4,10 +4,10 @@
 /*
  * print_array - prints array from low to high index
  * @array: pointer to sorted array of ints
- * @high: upper bound index
  * @low: lower bound index
+ * @high: upper bound index
  */
-static void print_array(int *array, size_t high, size_t low)
+void print_array(int *array, size_t low, size_t high)
 {
 	size_t i;
 
@@ -26,33 +26,33 @@ static void print_array(int *array, size_t high, size_t low)
 /*
  * binary_search - recursive binary search helper
  * @array: pointer to sorted array
- * @high: upper index bound
  * @low: lower index bound
+ * @high: upper index bound
  * @value: target value to search for
  *
  * Return: index of first occurrence of value, or -1 if not found
  */
-static int binary_search(int *array, size_t high, size_t low, int value)
+int binary_search(int *array, size_t low, size_t high, int value)
 {
 	size_t mid;
 
 	if (low > high)
 		return -1;
 
-	print_array(array, high, low);
+	print_array(array, low, high);
 
 	mid = low + (high - low) / 2;
 
 	if (array[mid] == value) {
 		if (mid > low && array[mid - 1] == value)
-			return binary_search(array, mid - 1, low, value);
+			return binary_search(array, low, mid - 1, value);
 		return mid;
 	}
 
 	if (array[mid] > value)
-		return binary_search(array, mid - 1, low, value);
+		return binary_search(array, low, mid - 1, value);
 	else
-		return binary_search(array, high, mid + 1, value);
+		return binary_search(array, mid + 1, high, value);
 }
 
 /*
@@ -68,5 +68,5 @@ int advanced_binary(int *array, size_t size, int value)
 	if (!array || size == 0)
 		return -1;
 
-	return binary_search(array, size - 1, 0, value);
+	return binary_search(array, 0, size - 1, value);
 }
