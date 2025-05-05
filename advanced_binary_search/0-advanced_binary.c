@@ -1,4 +1,5 @@
 #include "search_algos.h"
+#include <stdio.h>
 /**
  * print_array - prints array
  * @array: sorted array of ints
