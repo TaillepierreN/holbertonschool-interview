@@ -31,7 +31,7 @@ int *_advanced_binary(int *array, size_t size, int value)
 	{
 		if (i == 0 || array[i - 1] != value)
 			return (array + i);
-		return (_advanced_binary(array, i + 1, value));
+		return (_advanced_binary(array, i, value));
 	}
 	else if (array[i] > value)
 	{
