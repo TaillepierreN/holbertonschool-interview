@@ -4,8 +4,8 @@
 #include <stddef.h>
 
 int advanced_binary(int *array, size_t size, int value);
-int binary_search(int *array, size_t low, size_t high, int value);
-void print_array(int *array, size_t low, size_t high);
+int binary_search(int *array, size_t high, size_t low, int value);
+void print_array(int *array, size_t high, size_t low);
 
 
 #endif
