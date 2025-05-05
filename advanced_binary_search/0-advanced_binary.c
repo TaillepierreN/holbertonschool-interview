@@ -2,60 +2,65 @@
 #include <stdio.h>
 
 /**
- * _advanced_binary - Helper to perform advanced binary search recursively
- * @array: Pointer to the current subarray
- * @size: Size of the current subarray
- * @value: Value to search for
- *
- * Return: Pointer to first occurrence or NULL
+ * print_array - prints the current array being searched
+ * @array: the full array
+ * @low: lower bound
+ * @high: upper bound
  */
-int *_advanced_binary(int *array, size_t size, int value)
+void print_array(int *array, size_t low, size_t high)
 {
 	size_t i;
 
-	if (array == NULL || size == 0)
-		return (NULL);
-
 	printf("Searching in array: ");
-	for (i = 0; i < size; i++)
+	for (i = low; i <= high; i++)
 	{
 		printf("%d", array[i]);
-		if (i < size - 1)
+		if (i != high)
 			printf(", ");
 	}
 	printf("\n");
-
-	i = size / 2;
-
-	if (array[i] == value)
-	{
-		if (i == 0 || array[i - 1] != value)
-			return (array + i);
-		return (_advanced_binary(array, i + 1, value));
-	}
-	else if (array[i] > value)
-	{
-		return (_advanced_binary(array, i, value));
-	}
-	else
-	{
-		return (_advanced_binary(array + i + 1, size - i - 1, value));
-	}
 }
 
 /**
- * advanced_binary - Performs advanced binary search for first occurrence
- * @array: Pointer to the full array
- * @size: Size of the array
- * @value: Value to search for
- *
- * Return: Index of the first occurrence or -1
+ * b_search - recursively searches for the first occurrence of value
+ * @array: sorted array
+ * @low: start index
+ * @high: end index
+ * @value: value to search
+ * Return: index or -1
+ */
+int binary_search(int *array, size_t low, size_t high, int value)
+{
+	size_t mid;
+
+	if (low > high)
+		return (-1);
+
+	print_array(array, low, high);
+	mid = low + (high - low) / 2;
+
+	if (array[mid] == value)
+	{
+		if (mid == low || array[mid - 1] != value)
+			return (mid);
+		return (binary_search(array, low, mid, value));
+	}
+	else if (array[mid] > value)
+		return (binary_search(array, low, mid - 1, value));
+	else
+		return (binary_search(array, mid + 1, high, value));
+}
+
+/**
+ * advanced_binary - performs advanced binary search
+ * @array: sorted array
+ * @size: number of elements
+ * @value: value to search for
+ * Return: index of first occurrence or -1
  */
 int advanced_binary(int *array, size_t size, int value)
 {
-	int *res = _advanced_binary(array, size, value);
-
-	if (res == NULL)
+	if (array == NULL || size == 0)
 		return (-1);
-	return (res - array);
+	return (binary_search(array, 0, size - 1, value));
 }
