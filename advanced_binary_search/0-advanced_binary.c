@@ -36,20 +36,28 @@ int recursive_search(int *array, size_t low, size_t high, int value)
 	if (low > high)
 		return (-1);
 
-	print_subarray(array, low, high);
-
 	mid = low + (high - low) / 2;
 
 	if (array[mid] == value)
 	{
 		if (mid == low || array[mid - 1] != value)
+		{
+			print_subarray(array, low, high);
 			return ((int)mid);
+		}
+		print_subarray(array, low, high);
 		return (recursive_search(array, low, mid - 1, value));
 	}
 	else if (array[mid] > value)
+	{
+		print_subarray(array, low, high);
 		return (recursive_search(array, low, mid - 1, value));
+	}
 	else
+	{
+		print_subarray(array, low, high);
 		return (recursive_search(array, mid + 1, high, value));
+	}
 }
 
 /**
