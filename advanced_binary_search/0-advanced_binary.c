@@ -45,20 +45,21 @@ int recursive_search(int *array, size_t low, size_t high, int value)
 			print_subarray(array, low, high);
 			return ((int)mid);
 		}
-		print_subarray(array, low, high);
+		print_subarray(array, low, mid);
 		return (recursive_search(array, low, mid - 1, value));
 	}
 	else if (array[mid] > value)
 	{
-		print_subarray(array, low, high);
+		print_subarray(array, low, mid);
 		return (recursive_search(array, low, mid - 1, value));
 	}
 	else
 	{
-		print_subarray(array, low, high);
+		print_subarray(array, mid + 1, high);
 		return (recursive_search(array, mid + 1, high, value));
 	}
 }
+
 
 /**
  * advanced_binary - Calls recursive search to find first occurrence of value
