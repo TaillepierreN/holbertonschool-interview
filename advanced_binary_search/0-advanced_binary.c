@@ -9,21 +9,14 @@
  */
 void print_array(int *array, size_t high, size_t low)
 {
-	if (low >= high)
-		return;
+	size_t i;
 
 	printf("Searching in array: ");
-
-	if (low == high) {
-		printf("%u\n", array[high]);
-		return;
-	}
-
-	while (low <= high) {
-		printf("%u", array[low]);
-		if (low != high)
+	for (i = low; i <= high; i++)
+	{
+		printf("%d", array[i]);
+		if (i < high)
 			printf(", ");
-		low++;
 	}
 	printf("\n");
 }
@@ -39,27 +32,30 @@ void print_array(int *array, size_t high, size_t low)
  */
 int binary_search(int *array, size_t high, size_t low, int value)
 {
-	int mid = low + (high - low) / 2;
+	size_t mid;
+
+	if (low > high)
+		return (-1);
 
 	print_array(array, high, low);
+	mid = low + (high - low) / 2;
 
-	if (array[mid] == value) {
-		print_array(array, mid, low);
-		if (array[mid] == array[mid - 1]) {
-			print_array(array, mid, mid - 1);
-			mid--;
-		}
-		return mid;
+	if (array[mid] == value)
+	{
+		if (mid == low || array[mid - 1] != value)
+			return ((int)mid);
+		return (binary_search(array, mid, low, value));
 	}
-
-	if (high >= low) {
-		if (array[mid] > value)
-			return binary_search(array, mid, low, value);
-		else
-			return binary_search(array, high, mid + 1, value);
+	else if (array[mid] < value)
+	{
+		return (binary_search(array, high, mid + 1, value));
 	}
-
-	return -1;
+	else
+	{
+		if (mid == 0) // to prevent underflow
+			return (-1);
+		return (binary_search(array, mid - 1, low, value));
+	}
 }
 
 /*
@@ -72,11 +68,8 @@ int binary_search(int *array, size_t high, size_t low, int value)
  */
 int advanced_binary(int *array, size_t size, int value)
 {
-	int ret;
+	if (!array || size == 0)
+		return (-1);
 
-	if (!array)
-		return -1;
-
-	ret = binary_search(array, (int)size - 1, 0, value);
-	return ret;
+	return (binary_search(array, size - 1, 0, value));
 }
