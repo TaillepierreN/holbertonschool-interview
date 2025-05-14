@@ -23,7 +23,7 @@ def count_words(subreddit, word_list, after=None, count_dict=None):
 
     # Prepare the API URL
     url = f"https://www.reddit.com/r/{subreddit}/hot.json"
-    headers = {"User-Agent": "python:com.holbertonschool.countbot:v1.0 (by /u/NicolasT)"}
+    headers = {"User-Agent": "keyword-counter-holberton"}
     params = {"limit": 100}
     if after:
         params["after"] = after
