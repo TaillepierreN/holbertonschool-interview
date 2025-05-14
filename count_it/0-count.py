@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """
-0-count.py - Count occurrences of keywords in Reddit hot article titles recursively.
+0-count.py - Count occurrences of keywords in Reddit
+hot article titles recursively.
 """
 import requests
 import sys
@@ -28,7 +29,8 @@ def count_words(subreddit, word_list, after=None, count_dict=None):
         params["after"] = after
 
     # Send the GET request
-    response = requests.get(url, headers=headers, params=params, allow_redirects=False)
+    response = requests.get(url, headers=headers, params=params,
+                            allow_redirects=False)
 
     if response.status_code != 200:
         return
