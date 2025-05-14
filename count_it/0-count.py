@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 """ Module : count_it """
 
-import requests
 import re
+import requests
 
 def count_words(subreddit, word_list, after=None, counts=None):
     """ recursive function that queries the Reddit API """
