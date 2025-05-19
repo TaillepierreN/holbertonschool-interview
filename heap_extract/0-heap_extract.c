@@ -33,7 +33,7 @@ static heap_t *get_last_node(heap_t *root, size_t height)
 
 	if (right)
 		return (right);
-	return get_last_node(root->left, height - 1);
+	return (get_last_node(root->left, height - 1));
 }
 
 /**
@@ -57,6 +57,7 @@ static void heapify_down(heap_t *root)
 			break;
 
 		int tmp = max->n;
+
 		max->n = largest->n;
 		largest->n = tmp;
 		max = largest;
