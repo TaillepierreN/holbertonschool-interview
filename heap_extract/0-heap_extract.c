@@ -12,6 +12,7 @@ static size_t get_tree_height(const binary_tree_t *tree)
 		return (0);
 	size_t left = get_tree_height(tree->left);
 	size_t right = get_tree_height(tree->right);
+
 	return ((left > right ? left : right) + 1);
 }
 
@@ -24,13 +25,14 @@ static size_t get_tree_height(const binary_tree_t *tree)
 static heap_t *get_last_node(heap_t *root, size_t height)
 {
 	if (!root || height == 0)
-		return NULL;
+		return (NULL);
 	if (height == 1)
-		return root;
+		return (root);
 
 	heap_t *right = get_last_node(root->right, height - 1);
+
 	if (right)
-		return right;
+		return (right);
 	return get_last_node(root->left, height - 1);
 }
 
@@ -45,6 +47,7 @@ static void heapify_down(heap_t *root)
 	while (max)
 	{
 		heap_t *largest = max;
+
 		if (max->left && max->left->n > largest->n)
 			largest = max->left;
 		if (max->right && max->right->n > largest->n)
@@ -68,7 +71,7 @@ static void heapify_down(heap_t *root)
 int heap_extract(heap_t **root)
 {
 	if (!root || !*root)
-		return 0;
+		return (0);
 
 	int value = (*root)->n;
 
@@ -76,13 +79,14 @@ int heap_extract(heap_t **root)
 	{
 		free(*root);
 		*root = NULL;
-		return value;
+		return (value);
 	}
 
 	size_t height = get_tree_height(*root);
 	heap_t *last = get_last_node(*root, height);
+
 	if (!last)
-		return 0;
+		return (0);
 
 	(*root)->n = last->n;
 
@@ -93,5 +97,5 @@ int heap_extract(heap_t **root)
 	free(last);
 
 	heapify_down(*root);
-	return value;
+	return (value);
 }
