@@ -4,6 +4,7 @@
 		"*.ndjson": "jsonl",
 		"*.dbclient-js": "javascript",
 		".fantomasignore": "ignore",
-		"lists.h": "c"
+		"lists.h": "c",
+		"type_traits": "c"
 	}
 }
