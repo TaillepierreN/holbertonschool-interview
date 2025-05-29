@@ -71,8 +71,12 @@ int main(int argc, char *argv[])
 
 	if (argc != 3 || !is_digit(argv[1]) || !is_digit(argv[2]))
 	{
-		_putchar('E'); _putchar('r'); _putchar('r'); _putchar('o');
-		_putchar('r'); _putchar('\n');
+		_putchar('E');
+		_putchar('r');
+		_putchar('r');
+		_putchar('o');
+		_putchar('r');
+		_putchar('\n');
 		exit(98);
 	}
 
