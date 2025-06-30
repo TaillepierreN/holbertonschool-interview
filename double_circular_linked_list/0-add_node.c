@@ -12,17 +12,17 @@ static List *create_node(char *str)
 	List *node = malloc(sizeof(List));
 
 	if (!node)
-		return NULL;
+		return (NULL);
 
 	node->str = strdup(str);
 	if (!node->str)
 	{
 		free(node);
-		return NULL;
+		return (NULL);
 	}
 
 	node->next = node->prev = NULL;
-	return node;
+	return (node);
 }
 
 /**
@@ -36,7 +36,7 @@ List *add_node_end(List **list, char *str)
 	List *node = create_node(str);
 
 	if (!node)
-		return NULL;
+		return (NULL);
 
 	if (!*list)
 	{
@@ -54,11 +54,12 @@ List *add_node_end(List **list, char *str)
 		(*list)->prev = node;
 	}
 
-	return node;
+	return (node);
 }
 
 /**
- * add_node_begin - Adds a new node at the beginning of a double circular linked list
+ * add_node_begin - Adds a new node at the beginning of
+ * a double circular linked list
  * @list: Pointer to the list head pointer
  * @str: The string to duplicate into the new node
  * Return: Address of the new node, or NULL if fail
@@ -69,5 +70,5 @@ List *add_node_begin(List **list, char *str)
 
 	if (node)
 		*list = node;
-	return node;
+	return (node);
 }
