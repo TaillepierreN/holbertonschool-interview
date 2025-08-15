@@ -1,10 +1,13 @@
 #include "regex.h"
+/* regex.c */
+
 
 /**
- * Return 1 if the first char of str matches the first
- * atom of pattern (a literal or '.')
- * @s: first char to match
- * @p: second char to match
+ * char_match - Check if one character matches a pattern atom
+ * @s: the character from the input string
+ * @p: the pattern atom (a literal or '.')
+ *
+ * Return: 1 if @p is '.' or equals @s, otherwise 0
  */
 static int char_match(char s, char p)
 {
@@ -12,10 +15,17 @@ static int char_match(char s, char p)
 }
 
 /**
- * - '.' matches any single character
- * - 'x*' matches zero or more of 'x' (where x can also be '.')
- * @str: string to use
- * @pattern: pattern to use
+ * regex_match - Recursively match a string against a simple regex
+ * @str: input string to scan (may be empty)
+ * @pattern: pattern to match (may be empty); supports '.' and '*'
+ *
+ * Description:
+ * The matcher supports two metacharacters:
+ * '.' matches any single character.
+ * 'x*' matches zero or more occurrences of the preceding atom 'x'
+ * (where 'x' can be a literal or '.').
+ *
+ * Return: 1 if @pattern matches @str entirely, otherwise 0
  */
 int regex_match(const char *str, const char *pattern)
 {
