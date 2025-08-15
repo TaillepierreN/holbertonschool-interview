@@ -1,17 +1,21 @@
 #include "regex.h"
 
-/*
+/**
  * Return 1 if the first char of str matches the first
  * atom of pattern (a literal or '.')
+ * @s: first char to match
+ * @p: second char to match
  */
 static int char_match(char s, char p)
 {
 	return ((p == '.') || (s == p));
 }
 
-/*
+/**
  * - '.' matches any single character
  * - 'x*' matches zero or more of 'x' (where x can also be '.')
+ * @str: string to use
+ * @pattern: pattern to use
  */
 int regex_match(const char *str, const char *pattern)
 {
