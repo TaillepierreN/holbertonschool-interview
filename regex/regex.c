@@ -1,6 +1,6 @@
 #include "regex.h"
 
-/* 
+/*
  * Return 1 if the first char of str matches the first
  * atom of pattern (a literal or '.')
  */
