@@ -1,7 +1,9 @@
 #include "regex.h"
 
-/* Return 1 if the first char of str matches the first
-atom of pattern (a literal or '.') */
+/* 
+ * Return 1 if the first char of str matches the first
+ * atom of pattern (a literal or '.')
+ */
 static int char_match(char s, char p)
 {
 	return ((p == '.') || (s == p));
