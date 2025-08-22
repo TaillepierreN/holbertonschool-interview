@@ -67,6 +67,17 @@ static int alloc_workspace(ws_t *ws, const char **words, int nb_words)
 	return (0);
 }
 
+/*
+ * Small helper to clear counts
+ * @arr: array to clear
+ * @len: length of array
+ */
+static void zero_counts(int *arr, int len)
+{
+	for (int i = 0; i < len; i++)
+		arr[i] = 0;
+}
+
 /**
  * slide_for_offset - Run the sliding window on one alignment offset
  * @s: input string
@@ -122,17 +133,6 @@ static void slide_for_offset(const char *s, ws_t *ws, size_t offset, int *found)
 			window_words--;
 		}
 	}
-}
-
-/*
- * Small helper to clear counts
- * @arr: array to clear
- * @len: length of array
- */
-static void zero_counts(int *arr, int len)
-{
-	for (int i = 0; i < len; i++)
-		arr[i] = 0;
 }
 
 /**
