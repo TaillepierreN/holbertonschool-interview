@@ -17,7 +17,8 @@
 	do { \
 		left_idx = token_to_index(s + left, ws->unique_words, \
 					  ws->unique_count, ws->word_length); \
-		if (left_idx != -1) { \
+		if (left_idx != -1) \
+		{ \
 			ws->current_counts[left_idx]--; \
 			window_words--; \
 		} \
@@ -48,14 +49,16 @@
 #define MAP_WORD_TO_UNIQUE() \
 	do { \
 		idx = -1; \
-		for (j = 0; j < ws->unique_count; j++) { \
+		for (j = 0; j < ws->unique_count; j++) \
+		{ \
 			if (strncmp(words[i], ws->unique_words[j], \
 				    ws->word_length) == 0) { \
 				idx = j; \
 				break; \
 			} \
 		} \
-		if (idx == -1) { \
+		if (idx == -1) \
+		{ \
 			ws->unique_words[ws->unique_count] = words[i]; \
 			idx = ws->unique_count++; \
 		} \
