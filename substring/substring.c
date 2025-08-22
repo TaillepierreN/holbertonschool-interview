@@ -75,14 +75,12 @@ static int alloc_workspace(ws_t *ws, const char **words, int nb_words)
  * @found: in/out: number of indices already found
  * Return: void
  **/
-static void slide_for_offset(const char *s, ws_t *ws,
-							 size_t offset, int *found)
+static void slide_for_offset(const char *s, ws_t *ws, size_t offset, int *found)
 {
 	size_t left = offset, right = offset;
 	int window_words = 0, idx, left_idx;
 
-	for (int i = 0; i < ws->unique_count; i++)
-		ws->current_counts[i] = 0;
+	zero_counts(ws->current_counts, ws->unique_count);
 
 	while (right + ws->word_length <= ws->string_length)
 	{
@@ -92,12 +90,12 @@ static void slide_for_offset(const char *s, ws_t *ws,
 
 		if (idx == -1)
 		{
-			for (int i = 0; i < ws->unique_count; i++)
-				ws->current_counts[i] = 0;
+			zero_counts(ws->current_counts, ws->unique_count);
 			window_words = 0;
 			left = right;
 			continue;
 		}
+
 		ws->current_counts[idx]++;
 		window_words++;
 
@@ -106,9 +104,13 @@ static void slide_for_offset(const char *s, ws_t *ws,
 			left_idx = token_to_index(s + left, ws->unique_words,
 									  ws->unique_count, ws->word_length);
 			if (left_idx != -1)
-				ws->current_counts[left_idx]--, window_words--;
+			{
+				ws->current_counts[left_idx]--;
+				window_words--;
+			}
 			left += ws->word_length;
 		}
+
 		if (window_words == ws->nb_words)
 		{
 			ws->result[(*found)++] = (int)left;
@@ -120,6 +122,17 @@ static void slide_for_offset(const char *s, ws_t *ws,
 			window_words--;
 		}
 	}
+}
+
+/*
+ * Small helper to clear counts
+ * @arr: array to clear
+ * @len: length of array
+ */
+static void zero_counts(int *arr, int len)
+{
+	for (int i = 0; i < len; i++)
+		arr[i] = 0;
 }
 
 /**
