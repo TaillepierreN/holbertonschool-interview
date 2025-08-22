@@ -2,17 +2,22 @@
 #include <string.h>
 #include "substring.h"
 
-/* Helper macros (keep functions short, satisfy Betty) */
+/* Helper macros to keep functions short (Betty-friendly) */
 #define CLEAR_CURRENT_COUNTS(ws) \
 	zero_counts((ws)->current_counts, (ws)->unique_count)
 
+#define RESET_WINDOW() \
+	do { \
+		CLEAR_CURRENT_COUNTS(ws); \
+		window_words = 0; \
+		left = right; \
+	} while (0)
+
 #define SHRINK_LEFT_WINDOW() \
-	do \
-	{ \
+	do { \
 		left_idx = token_to_index(s + left, ws->unique_words, \
 					  ws->unique_count, ws->word_length); \
-		if (left_idx != -1) \
-		{ \
+		if (left_idx != -1) { \
 			ws->current_counts[left_idx]--; \
 			window_words--; \
 		} \
@@ -20,8 +25,7 @@
 	} while (0)
 
 #define RECORD_HIT() \
-	do \
-	{ \
+	do { \
 		ws->result[(*found)++] = (int)left; \
 		left_idx = token_to_index(s + left, ws->unique_words, \
 					  ws->unique_count, ws->word_length); \
@@ -31,12 +35,39 @@
 		window_words--; \
 	} while (0)
 
+#define ASSIGN_WS_POINTERS() \
+	do { \
+		ws->result = (int *)ws->workspace_buffer; \
+		ws->required_counts = ws->result + ws->result_capacity; \
+		ws->current_counts = ws->required_counts + nb_words; \
+		ws->word_to_unique = ws->current_counts + nb_words; \
+		ws->unique_words = (const char **)( \
+			ws->workspace_buffer + ints_bytes); \
+	} while (0)
+
+#define MAP_WORD_TO_UNIQUE() \
+	do { \
+		idx = -1; \
+		for (j = 0; j < ws->unique_count; j++) { \
+			if (strncmp(words[i], ws->unique_words[j], \
+				    ws->word_length) == 0) { \
+				idx = j; \
+				break; \
+			} \
+		} \
+		if (idx == -1) { \
+			ws->unique_words[ws->unique_count] = words[i]; \
+			idx = ws->unique_count++; \
+		} \
+		ws->word_to_unique[i] = idx; \
+	} while (0)
+
 /**
- * token_to_index - Linear search a token among unique words (fixed length)
+ * token_to_index - Linear search a token among unique words
  * @token: pointer to token inside s
  * @unique_words: array of unique word pointers
  * @unique_count: number of unique words
- * @word_length: length of each word
+ * @word_length: fixed length of each word
  * Return: index in unique_words[], or -1 if not found
  **/
 static int token_to_index(const char *token, const char **unique_words,
@@ -84,37 +115,19 @@ static int alloc_workspace(ws_t *ws, const char **words, int nb_words)
 	ws->workspace_buffer = malloc(ints_bytes + ptrs_bytes);
 	if (!ws->workspace_buffer)
 		return (-1);
-	ws->result = (int *)ws->workspace_buffer;
-	ws->required_counts = ws->result + ws->result_capacity;
-	ws->current_counts = ws->required_counts + nb_words;
-	ws->word_to_unique = ws->current_counts + nb_words;
-	ws->unique_words =
-		(const char **)(ws->workspace_buffer + ints_bytes);
+
+	ASSIGN_WS_POINTERS();
 	ws->nb_words = nb_words;
+
 	ws->unique_count = 0;
 	for (i = 0; i < nb_words; i++)
-	{
-		idx = -1;
-		for (j = 0; j < ws->unique_count; j++)
-		{
-			if (strncmp(words[i], ws->unique_words[j],
-				    ws->word_length) == 0)
-			{
-				idx = j;
-				break;
-			}
-		}
-		if (idx == -1)
-		{
-			ws->unique_words[ws->unique_count] = words[i];
-			idx = ws->unique_count++;
-		}
-		ws->word_to_unique[i] = idx;
-	}
+		MAP_WORD_TO_UNIQUE();
+
 	zero_counts(ws->required_counts, ws->unique_count);
 	zero_counts(ws->current_counts, ws->unique_count);
 	for (i = 0; i < nb_words; i++)
 		ws->required_counts[ws->word_to_unique[i]]++;
+
 	return (0);
 }
 
@@ -132,23 +145,17 @@ static void slide_for_offset(const char *s, ws_t *ws,
 	int window_words = 0, idx, left_idx;
 
 	CLEAR_CURRENT_COUNTS(ws);
-
 	while (right + ws->word_length <= ws->string_length)
 	{
-		const char *tok = s + right;
-
-		idx = token_to_index(tok, ws->unique_words,
+		idx = token_to_index(s + right, ws->unique_words,
 				     ws->unique_count, ws->word_length);
 		right += ws->word_length;
 
 		if (idx == -1)
 		{
-			CLEAR_CURRENT_COUNTS(ws);
-			window_words = 0;
-			left = right;
+			RESET_WINDOW();
 			continue;
 		}
-
 		ws->current_counts[idx]++;
 		window_words++;
 
