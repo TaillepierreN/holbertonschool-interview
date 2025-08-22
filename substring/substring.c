@@ -2,30 +2,33 @@
 #include <string.h>
 #include "substring.h"
 
-/* Helper macros (keeps functions short, no behavior change) because betty*/
+/* Helper macros (keep functions short, satisfy Betty) */
 #define CLEAR_CURRENT_COUNTS(ws) \
 	zero_counts((ws)->current_counts, (ws)->unique_count)
 
-#define SHRINK_LEFT_WINDOW()                                              \
-	do {                                                                  \
-		left_idx = token_to_index(s + left, ws->unique_words,             \
-								  ws->unique_count, ws->word_length);     \
-		if (left_idx != -1) {                                             \
-			ws->current_counts[left_idx]--;                               \
-			window_words--;                                               \
-		}                                                                 \
-		left += ws->word_length;                                          \
+#define SHRINK_LEFT_WINDOW() \
+	do \
+	{ \
+		left_idx = token_to_index(s + left, ws->unique_words, \
+					  ws->unique_count, ws->word_length); \
+		if (left_idx != -1) \
+		{ \
+			ws->current_counts[left_idx]--; \
+			window_words--; \
+		} \
+		left += ws->word_length; \
 	} while (0)
 
-#define RECORD_HIT()                                                      \
-	do {                                                                  \
-		ws->result[(*found)++] = (int)left;                               \
-		left_idx = token_to_index(s + left, ws->unique_words,             \
-								  ws->unique_count, ws->word_length);     \
-		if (left_idx != -1)                                               \
-			ws->current_counts[left_idx]--;                               \
-		left += ws->word_length;                                          \
-		window_words--;                                                   \
+#define RECORD_HIT() \
+	do \
+	{ \
+		ws->result[(*found)++] = (int)left; \
+		left_idx = token_to_index(s + left, ws->unique_words, \
+					  ws->unique_count, ws->word_length); \
+		if (left_idx != -1) \
+			ws->current_counts[left_idx]--; \
+		left += ws->word_length; \
+		window_words--; \
 	} while (0)
 
 /**
@@ -37,7 +40,7 @@
  * Return: index in unique_words[], or -1 if not found
  **/
 static int token_to_index(const char *token, const char **unique_words,
-						  int unique_count, size_t word_length)
+			  int unique_count, size_t word_length)
 {
 	int i;
 
@@ -75,15 +78,18 @@ static int alloc_workspace(ws_t *ws, const char **words, int nb_words)
 	int i, j, idx;
 
 	ws->result_capacity = (int)ws->string_length;
-	ints_bytes = (ws->result_capacity + 3 * (size_t)nb_words) * sizeof(int);
+	ints_bytes = (ws->result_capacity + 3 * (size_t)nb_words) *
+		     sizeof(int);
 	ptrs_bytes = (size_t)nb_words * sizeof(const char *);
 	ws->workspace_buffer = malloc(ints_bytes + ptrs_bytes);
-	if (!ws->workspace_buffer) return (-1);
+	if (!ws->workspace_buffer)
+		return (-1);
 	ws->result = (int *)ws->workspace_buffer;
 	ws->required_counts = ws->result + ws->result_capacity;
 	ws->current_counts = ws->required_counts + nb_words;
 	ws->word_to_unique = ws->current_counts + nb_words;
-	ws->unique_words = (const char **)(ws->workspace_buffer + ints_bytes);
+	ws->unique_words =
+		(const char **)(ws->workspace_buffer + ints_bytes);
 	ws->nb_words = nb_words;
 	ws->unique_count = 0;
 	for (i = 0; i < nb_words; i++)
@@ -92,9 +98,10 @@ static int alloc_workspace(ws_t *ws, const char **words, int nb_words)
 		for (j = 0; j < ws->unique_count; j++)
 		{
 			if (strncmp(words[i], ws->unique_words[j],
-						ws->word_length) == 0)
+				    ws->word_length) == 0)
 			{
-				idx = j; break;
+				idx = j;
+				break;
 			}
 		}
 		if (idx == -1)
@@ -108,7 +115,6 @@ static int alloc_workspace(ws_t *ws, const char **words, int nb_words)
 	zero_counts(ws->current_counts, ws->unique_count);
 	for (i = 0; i < nb_words; i++)
 		ws->required_counts[ws->word_to_unique[i]]++;
-
 	return (0);
 }
 
@@ -120,7 +126,7 @@ static int alloc_workspace(ws_t *ws, const char **words, int nb_words)
  * @found: in/out count of found indices
  **/
 static void slide_for_offset(const char *s, ws_t *ws,
-							 size_t offset, int *found)
+			     size_t offset, int *found)
 {
 	size_t left = offset, right = offset;
 	int window_words = 0, idx, left_idx;
@@ -132,7 +138,7 @@ static void slide_for_offset(const char *s, ws_t *ws,
 		const char *tok = s + right;
 
 		idx = token_to_index(tok, ws->unique_words,
-							 ws->unique_count, ws->word_length);
+				     ws->unique_count, ws->word_length);
 		right += ws->word_length;
 
 		if (idx == -1)
@@ -163,7 +169,7 @@ static void slide_for_offset(const char *s, ws_t *ws,
  * Return: malloc'ed array of indices (single slab) or NULL if none
  **/
 int *find_substring(const char *s, const char **words,
-					int nb_words, int *n)
+		    int nb_words, int *n)
 {
 	ws_t ws;
 	int found = 0, i;
