@@ -78,16 +78,13 @@ static int alloc_workspace(ws_t *ws, const char **words, int nb_words)
 	ints_bytes = (ws->result_capacity + 3 * (size_t)nb_words) * sizeof(int);
 	ptrs_bytes = (size_t)nb_words * sizeof(const char *);
 	ws->workspace_buffer = malloc(ints_bytes + ptrs_bytes);
-	if (!ws->workspace_buffer)
-		return (-1);
-
+	if (!ws->workspace_buffer) return (-1);
 	ws->result = (int *)ws->workspace_buffer;
 	ws->required_counts = ws->result + ws->result_capacity;
 	ws->current_counts = ws->required_counts + nb_words;
 	ws->word_to_unique = ws->current_counts + nb_words;
 	ws->unique_words = (const char **)(ws->workspace_buffer + ints_bytes);
 	ws->nb_words = nb_words;
-
 	ws->unique_count = 0;
 	for (i = 0; i < nb_words; i++)
 	{
@@ -97,8 +94,7 @@ static int alloc_workspace(ws_t *ws, const char **words, int nb_words)
 			if (strncmp(words[i], ws->unique_words[j],
 						ws->word_length) == 0)
 			{
-				idx = j;
-				break;
+				idx = j; break;
 			}
 		}
 		if (idx == -1)
@@ -108,7 +104,6 @@ static int alloc_workspace(ws_t *ws, const char **words, int nb_words)
 		}
 		ws->word_to_unique[i] = idx;
 	}
-
 	zero_counts(ws->required_counts, ws->unique_count);
 	zero_counts(ws->current_counts, ws->unique_count);
 	for (i = 0; i < nb_words; i++)
