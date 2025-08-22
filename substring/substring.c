@@ -3,157 +3,216 @@
 #include "substring.h"
 
 /**
- * linear search among unique words (all same length)
- * @tok: token to find
- * @uniq: array of unique words
- * @ucount: number of unique words
+ * struct workspace_s - Working buffers and metadata
+ * @len_s: length of input string s
  * @wlen: length of each word
- * Return: index in uniq[] or -1 if not found
+ * @nb_words: number of words requested
+ * @unique: number of unique words
+ * @cap: capacity for results array (len_s)
+ * @buf: single allocated slab
+ * @result: pointer to start indices written into @buf
+ * @counts: required frequency of each unique word
+ * @seen: current sliding-window frequencies
+ * @word_to_unique: map words[i] -> unique index
+ * @uniq: array of pointers to unique words
  */
+typedef struct workspace_s
+{
+	size_t len_s, wlen;
+	int nb_words, unique, cap;
+	unsigned char *buf;
+	int *result, *counts, *seen, *word_to_unique;
+	const char **uniq;
+} ws_t;
+
+/**
+ * token_to_idx - Linear search a token among unique words (fixed length)
+ * @tok: token pointer inside s
+ * @uniq: array of unique word pointers
+ * @ucount: number of unique words
+ * @wlen: word length
+ * Return: index in uniq[], or -1 if not found
+ **/
 static int token_to_idx(const char *tok, const char **uniq,
 						int ucount, size_t wlen)
 {
-	for (int i = 0; i < ucount; i++)
+	int i;
+
+	for (i = 0; i < ucount; i++)
 		if (strncmp(tok, uniq[i], wlen) == 0)
-			return i;
-	return -1;
+			return (i);
+	return (-1);
 }
 
 /**
- * find_substring - Finds all starting indices of substring(s) in s
- * that is a concatenation of each word in words exactly once and without
- * any intervening characters.
- * @param s: The string to search within
- * @param words: Array of words to concatenate
- * @param nb_words: Number of words in the array
- * @param n: Pointer to an integer to store the number of results found
- * Return: Array of starting indices (malloc'ed) or NULL if none found
- */
-int *find_substring(char const *s, char const **words, int nb_words, int *n)
+ * validate_inputs - Validate arguments and derive sizes
+ * @s: input string
+ * @words: array of words
+ * @nb_words: number of words
+ * @len_s: out param: length of s
+ * @wlen: out param: length of a word
+ * Return: 0 on success, -1 on failure
+ **/
+static int validate_inputs(char const *s, char const **words, int nb_words,
+						   size_t *len_s, size_t *wlen)
 {
-	size_t len_s, wlen;
-	int unique = 0, found = 0;
+	int i;
 
-	*n = 0;
 	if (!s || !words || nb_words <= 0)
-		return NULL;
+		return (-1);
+	*len_s = strlen(s);
+	*wlen = strlen(words[0]);
+	if (*len_s == 0 || *wlen == 0)
+		return (-1);
+	for (i = 1; i < nb_words; i++)
+		if (strlen(words[i]) != *wlen)
+			return (-1);
+	if (*len_s < (size_t)nb_words * (*wlen))
+		return (-1);
+	return (0);
+}
 
-	len_s = strlen(s);
-	wlen = strlen(words[0]);
-	if (wlen == 0 || len_s == 0)
-		return NULL;
+/**
+ * alloc_workspace - Allocate single slab and build unique-word tables
+ * @ws: workspace (len_s and wlen must be set)
+ * @s: input string (unused, kept for symmetry)
+ * @words: array of words
+ * @nb_words: number of words
+ * Return: 0 on success, -1 on failure
+ **/
+static int alloc_workspace(ws_t *ws, char const *s,
+						   char const **words, int nb_words)
+{
+	size_t sz_ints, sz_ptrs;
+	int i, j, idx;
 
-	for (int i = 1; i < nb_words; i++)
-		if (strlen(words[i]) != wlen)
-			return NULL;
+	(void)s;
+	ws->nb_words = nb_words;
+	ws->cap = (int)ws->len_s;
+	sz_ints = (ws->cap + 3 * (size_t)nb_words) * sizeof(int);
+	sz_ptrs = (size_t)nb_words * sizeof(const char *);
+	ws->buf = malloc(sz_ints + sz_ptrs);
+	if (!ws->buf)
+		return (-1);
 
-	if (len_s < (size_t)nb_words * wlen)
-		return NULL;
+	ws->result = (int *)ws->buf;
+	ws->counts = ws->result + ws->cap;
+	ws->seen = ws->counts + nb_words;
+	ws->word_to_unique = ws->seen + nb_words;
+	ws->uniq = (const char **)(ws->buf + sz_ints);
 
-	size_t cap = len_s;
-	size_t sz_ints = (cap + 3 * (size_t)nb_words) * sizeof(int);
-	size_t sz_ptrs = (size_t)nb_words * sizeof(const char *);
-	unsigned char *buf = malloc(sz_ints + sz_ptrs);
-	if (!buf)
-		return NULL;
-
-	int *result = (int *)(buf);
-	int *counts = result + cap;
-	int *seen = counts + nb_words;
-	int *word_to_unique = seen + nb_words;
-	const char **uniq = (const char **)(buf + sz_ints);
-
-	unique = 0;
-	for (int i = 0; i < nb_words; i++)
+	ws->unique = 0;
+	for (i = 0; i < nb_words; i++)
 	{
-		int idx = -1;
-		for (int j = 0; j < unique; j++)
-			if (strncmp(words[i], uniq[j], wlen) == 0)
+		idx = -1;
+		for (j = 0; j < ws->unique; j++)
+			if (strncmp(words[i], ws->uniq[j], ws->wlen) == 0)
 			{
 				idx = j;
 				break;
 			}
+		if (idx == -1)
+			ws->uniq[ws->unique++] = words[i], idx = ws->unique - 1;
+		ws->word_to_unique[i] = idx;
+	}
+
+	for (i = 0; i < ws->unique; i++)
+		ws->counts[i] = 0, ws->seen[i] = 0;
+	for (i = 0; i < nb_words; i++)
+		ws->counts[ws->word_to_unique[i]]++;
+	return (0);
+}
+
+/**
+ * reset_seen - Zero the sliding-window counts
+ * @ws: workspace
+ * Return: void
+ **/
+static void reset_seen(ws_t *ws)
+{
+	int i;
+
+	for (i = 0; i < ws->unique; i++)
+		ws->seen[i] = 0;
+}
+
+/**
+ * slide_for_offset - Run the sliding window on one alignment offset
+ * @s: input string
+ * @ws: workspace
+ * @offset: starting alignment in [0, wlen)
+ * @found: in/out: number of indices already found
+ * Return: void
+ **/
+static void slide_for_offset(char const *s, ws_t *ws,
+							 size_t offset, int *found)
+{
+	size_t left = offset, right = offset;
+	int window_words = 0, idx, lidx;
+
+	reset_seen(ws);
+	while (right + ws->wlen <= ws->len_s)
+	{
+		idx = token_to_idx(s + right, ws->uniq, ws->unique, ws->wlen);
+		right += ws->wlen;
 
 		if (idx == -1)
 		{
-			idx = unique++;
-			uniq[idx] = words[i];
+			reset_seen(ws);
+			window_words = 0;
+			left = right;
+			continue;
 		}
-		word_to_unique[i] = idx;
-	}
+		ws->seen[idx]++;
+		window_words++;
 
-	for (int i = 0; i < unique; i++)
-		counts[i] = 0;
-	for (int i = 0; i < unique; i++)
-		seen[i] = 0;
-
-	for (int i = 0; i < nb_words; i++)
-		counts[word_to_unique[i]]++;
-
-	/* sliding window par offset in [0, wlen) */
-	for (size_t offset = 0; offset < wlen; offset++)
-	{
-		size_t left = offset, right = offset;
-		int window_words = 0;
-
-		/* reset those we seen */
-		for (int i = 0; i < unique; i++)
-			seen[i] = 0;
-
-		while (right + wlen <= len_s)
+		while (ws->seen[idx] > ws->counts[idx])
 		{
-			const char *tok = s + right;
-			int idx = token_to_idx(tok, uniq, unique, wlen);
-			right += wlen;
-
-			if (idx == -1)
-			{
-				/* reset window on invalid token */
-				for (int i = 0; i < unique; i++)
-					seen[i] = 0;
-				window_words = 0;
-				left = right;
-				continue;
-			}
-
-			seen[idx]++;
-			window_words++;
-
-			/* if word exceeds required count, we shrink from left */
-			while (seen[idx] > counts[idx])
-			{
-				int lidx = token_to_idx(s + left, uniq, unique, wlen);
-				if (lidx != -1)
-				{
-					seen[lidx]--;
-					window_words--;
-				}
-				left += wlen;
-			}
-
-			/* full window (nb_words tokens) -> record */
-			if (window_words == nb_words)
-			{
-				result[found++] = (int)left;
-
-				/* move window forward by one word */
-				{
-					int lidx = token_to_idx(s + left, uniq, unique, wlen);
-					if (lidx != -1)
-						seen[lidx]--;
-					left += wlen;
-					window_words--;
-				}
-			}
+			lidx = token_to_idx(s + left, ws->uniq, ws->unique, ws->wlen);
+			if (lidx != -1)
+				ws->seen[lidx]--, window_words--;
+			left += ws->wlen;
+		}
+		if (window_words == ws->nb_words)
+		{
+			ws->result[(*found)++] = (int)left;
+			lidx = token_to_idx(s + left, ws->uniq, ws->unique, ws->wlen);
+			if (lidx != -1)
+				ws->seen[lidx]--;
+			left += ws->wlen;
+			window_words--;
 		}
 	}
+}
+
+/**
+ * find_substring - Find starting indices where words concatenate exactly once
+ * @s: string to scan
+ * @words: array of words (same length)
+ * @nb_words: number of words
+ * @n: out param to store count of found indices
+ * Return: malloc'ed array of indices (single slab) or NULL if none
+ **/
+int *find_substring(char const *s, char const **words, int nb_words, int *n)
+{
+	ws_t ws;
+	int found = 0;
+	size_t off;
+
+	*n = 0;
+	if (validate_inputs(s, words, nb_words, &ws.len_s, &ws.wlen) != 0)
+		return (NULL);
+	if (alloc_workspace(&ws, s, words, nb_words) != 0)
+		return (NULL);
+
+	for (off = 0; off < ws.wlen; off++)
+		slide_for_offset(s, &ws, off, &found);
 
 	if (found == 0)
 	{
-		free(buf);
-		return NULL;
+		free(ws.buf);
+		return (NULL);
 	}
-
 	*n = found;
-	return result;
+	return (ws.result);
 }
